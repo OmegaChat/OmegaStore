@@ -171,8 +171,6 @@ const FileExplorer = (props: props) => {
 
 export default FileExplorer;
 
-
-
 export const recursivelyGetFiles = (
 	initialPath: string,
 	search?: string
@@ -188,46 +186,53 @@ export const recursivelyGetFiles = (
 				const files: file[] = [];
 				let done = 0;
 				data.forEach((file) => {
-					fs.stat(path.join(calcPath, file), (err, stat) => {
-						if (err) {
-							console.log(err);
-						}
-						const fileObj: file = {
-							name: file,
-							path: path.join(initialPath || "", file),
-							isFile: stat.isFile(),
-							children: [],
-						};
-						if (stat.isDirectory()) {
-							recursivelyGetFiles(path.join(initialPath, file), search).then(
-								(children) => {
-									fileObj.children = children;
-									if (search) {
-										children.forEach((child) => {
-											files.push(child);
-										});
-									} else {
-										files.push(fileObj);
+					if (file[0] !== ".") {
+						fs.stat(path.join(calcPath, file), (err, stat) => {
+							if (err) {
+								console.log(err);
+							}
+							const fileObj: file = {
+								name: file,
+								path: path.join(initialPath || "", file),
+								isFile: stat.isFile(),
+								children: [],
+							};
+							if (stat.isDirectory()) {
+								recursivelyGetFiles(path.join(initialPath, file), search).then(
+									(children) => {
+										fileObj.children = children;
+										if (search) {
+											children.forEach((child) => {
+												files.push(child);
+											});
+										} else {
+											files.push(fileObj);
+										}
+										done++;
+										if (done === data.length) {
+											res(files);
+										}
 									}
-									done++;
-									if (done === data.length) {
-										res(files);
-									}
+								);
+							} else {
+								if (
+									!search ||
+									(search && file.toLowerCase().includes(search.toLowerCase()))
+								) {
+									files.push(fileObj);
 								}
-							);
-						} else {
-							if (
-								!search ||
-								(search && file.toLowerCase().includes(search.toLowerCase()))
-							) {
-								files.push(fileObj);
+								done++;
+								if (done === data.length) {
+									res(files);
+								}
 							}
-							done++;
-							if (done === data.length) {
-								res(files);
-							}
+						});
+					} else {
+						done++;
+						if (done === data.length) {
+							res(files);
 						}
-					});
+					}
 				});
 			} else {
 				res([]);
@@ -244,12 +249,12 @@ export const getServerSideProps = (
 	const host = context.req.headers.host;
 	let topLevelHost = host;
 	if (host) {
-		topLevelHost = host.split(".")[0]
+		topLevelHost = host.split(".")[0];
 	} else {
 		topLevelHost = "undefined";
 	}
 	if (topLevelHost.includes(":")) {
-		topLevelHost = "undefined"
+		topLevelHost = "undefined";
 	}
 	return new Promise((res) => {
 		recursivelyGetFiles(topLevelHost)

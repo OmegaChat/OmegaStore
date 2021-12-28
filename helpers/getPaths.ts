@@ -15,32 +15,39 @@ export const getPaths = (initialPath: string): Promise<string[]> => {
 				const paths: string[] = [];
 				let done = 0;
 				data.forEach((file) => {
-					fs.stat(path.join(calcPath, file), (err, stat) => {
-						if (err) {
-							console.log(err);
-						}
-						if (stat.isDirectory()) {
-							getPaths(path.join(initialPath, file)).then((children) => {
-								children.forEach((child) => {
-									paths.push(child);
-								})
+					if (file[0] !== ".") {
+						fs.stat(path.join(calcPath, file), (err, stat) => {
+							if (err) {
+								console.log(err);
+							}
+							if (stat.isDirectory()) {
+								getPaths(path.join(initialPath, file)).then((children) => {
+									children.forEach((child) => {
+										paths.push(child);
+									});
+									done++;
+									if (done === data.length) {
+										res(paths);
+									}
+								});
+							} else {
 								done++;
+								paths.push(path.join(initialPath, file));
 								if (done === data.length) {
 									res(paths);
 								}
-							})
-						} else {
-                            done++;
-                            paths.push(path.join(initialPath, file));
-                            if (done === data.length) {
-                                res(paths);
-                            }
-                        }
-                        });
+							}
+						});
+					} else {
+						done++;
+						if (done === data.length) {
+							res(paths);
+						}
+					}
 				});
 			} else {
 				res([]);
 			}
 		});
 	});
-}
+};
