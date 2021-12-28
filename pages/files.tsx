@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { createNoSubstitutionTemplateLiteral, setEmitFlags } from "typescript";
 import fs from "fs";
-import Link from "next/link";
 import path from "path";
+import buildPath from "../helpers/buildPath";
 
 export const replaceLast = (str: string, find: string, replace: string) => {
 	const index = str.lastIndexOf(find);
@@ -172,18 +171,20 @@ const FileExplorer = (props: props) => {
 
 export default FileExplorer;
 
+
+
 export const recursivelyGetFiles = (
 	initialPath: string,
 	search?: string
 ): Promise<file[]> => {
-	const calcPath = path.join(process.cwd(), initialPath);
+	const calcPath = path.join(process.cwd(), "files", buildPath(initialPath));
 	return new Promise((res) => {
 		fs.readdir(calcPath, (err, data) => {
 			if (err) {
 				res([]);
 				console.log(err);
 			}
-			if (data.length > 0 && data.length < 100) {
+			if (data && data.length > 0 && data.length < 100) {
 				const files: file[] = [];
 				let done = 0;
 				data.forEach((file) => {
@@ -240,9 +241,18 @@ export const getServerSideProps = (
 ): Promise<{
 	props: { rootFiles: file[] };
 }> => {
-	console.log(context.req.headers.host);
+	const host = context.req.headers.host;
+	let topLevelHost = host;
+	if (host) {
+		topLevelHost = host.split(".")[0]
+	} else {
+		topLevelHost = "undefined";
+	}
+	if (topLevelHost.includes(":")) {
+		topLevelHost = "undefined"
+	}
 	return new Promise((res) => {
-		recursivelyGetFiles("")
+		recursivelyGetFiles(topLevelHost)
 			.then((e) => {
 				res({
 					props: {

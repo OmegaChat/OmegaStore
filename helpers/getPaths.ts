@@ -1,16 +1,17 @@
 import path from "path";
 import fs from "fs";
 import { getPageFiles } from "next/dist/server/get-page-files";
+import buildPath from "./buildPath";
 
 export const getPaths = (initialPath: string): Promise<string[]> => {
-	const calcPath = path.join(process.cwd(), initialPath);
+	const calcPath = path.join(process.cwd(), "files", buildPath(initialPath));
 	return new Promise((res) => {
 		fs.readdir(calcPath, (err, data) => {
 			if (err) {
 				res([]);
 				console.log(err);
 			}
-			if (data.length > 0 && data.length < 100) {
+			if (data && data.length > 0 && data.length < 100) {
 				const paths: string[] = [];
 				let done = 0;
 				data.forEach((file) => {

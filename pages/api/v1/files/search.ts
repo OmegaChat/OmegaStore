@@ -1,9 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { recursivelyGetFiles } from "../../../files";
+import { getHost } from "./open/[...path]";
+
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
 	return recursivelyGetFiles(
-		"",
+		getHost(req),
 		typeof req.body.query === "string" ? req.body.query : ""
 	)
 		.then((files) => {
