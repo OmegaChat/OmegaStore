@@ -49,7 +49,6 @@ a {
 	}
 	.content__rows {
 		margin-top: 40px;
-		overflow: scroll;
 		scrollbar-width: none !important;
 		// scrollbar-width: none;
 		scroll-snap-type: x mandatory;
@@ -57,12 +56,13 @@ a {
 		display: flex;
 		flex-flow: row;
 		.rows__row {
-			scroll-snap-align: start;
+			resize: horizontal;
 			height: calc(100vh - 280px);
+			max-width: 500px;
 			text-align: left;
-			overflow-y: scroll;
+			overflow: scroll;
 			scrollbar-width: none !important;
-			max-width: 300px;
+			min-width: 100px;
 			padding: 30px;
 			background-color: rgb(95, 95, 95);
 			animation: showItem 0.3s;
