@@ -1,7 +1,7 @@
-import FileExplorer from "./files";
+import FileExplorer, { props } from "./files";
 import { getServerSideProps as gsP } from "./files";
 
-export default (props: any) => {
+const home = (props: props) => {
 	return (
 		<main>
 			<div className="header">
@@ -19,5 +19,7 @@ export default (props: any) => {
 		</main>
 	);
 };
+
+export default home;
 
 export const getServerSideProps = gsP;

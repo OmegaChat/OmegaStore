@@ -20,7 +20,7 @@ interface file {
 	children: file[];
 }
 
-interface props {
+export interface props {
 	rootFiles: file[];
 }
 

@@ -4,4 +4,6 @@ export const replaceAll = (str: string, find: string, replace: string) => str.sp
 
 const makeSlashPart = (str: string, host: string) => path.join(__dirname, "..", host, str);
 
-export default (path: string) => replaceAll(replaceAll(replaceAll(replaceAll(path, '../', ""), '..', ''), "$", ""), "-", '')
+const buildPath = (path: string) => replaceAll(replaceAll(replaceAll(replaceAll(path, '../', ""), '..', ''), "$", ""), "-", '')
+
+export default buildPath;
