@@ -36,9 +36,7 @@ const FileExplorer = (props: props) => {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({
-					query: search,
-				}),
+				body: search,
 				credentials: "include",
 			}).then((r) => {
 				r.json().then((res) => {
@@ -62,8 +60,9 @@ const FileExplorer = (props: props) => {
 				></input>
 				{searchResults.length > 0 ? (
 					<div className="search__results">
-						{searchResults.map((r) => (
+						{searchResults.map((r, i) => (
 							<a
+								key={i}
 								target="_blank noopener noreferrer"
 								href={
 									"/api/v1/files/open/" +
@@ -92,21 +91,9 @@ const FileExplorer = (props: props) => {
 									{row.length ? (
 										row.map((file: file) => {
 											if (file.isFile) {
-												<a
-													target="_blank noopener noreferrer"
-													href={
-														"/api/v1/files/open/" +
-														replaceLast(
-															encodeURIComponent(file.path),
-															"%2F",
-															"/"
-														)
-													}
-												>
-													{}
-												</a>;
 												return (
 													<a
+														key={file.path}
 														target="_blank noopener noreferrer"
 														href={
 															"/api/v1/files/open/" +
@@ -170,76 +157,7 @@ const FileExplorer = (props: props) => {
 };
 
 export default FileExplorer;
-
-export const recursivelyGetFiles = (
-	initialPath: string,
-	search?: string
-): Promise<file[]> => {
-	const calcPath = path.join(process.cwd(), "files", buildPath(initialPath));
-	return new Promise((res) => {
-		fs.readdir(calcPath, (err, data) => {
-			if (err) {
-				res([]);
-				console.log(err);
-			}
-			if (data && data.length > 0 && data.length < 100) {
-				const files: file[] = [];
-				let done = 0;
-				data.forEach((file) => {
-					if (file[0] !== ".") {
-						fs.stat(path.join(calcPath, file), (err, stat) => {
-							if (err) {
-								console.log(err);
-							}
-							const fileObj: file = {
-								name: file,
-								path: path.join(initialPath || "", file),
-								isFile: stat.isFile(),
-								children: [],
-							};
-							if (stat.isDirectory()) {
-								recursivelyGetFiles(path.join(initialPath, file), search).then(
-									(children) => {
-										fileObj.children = children;
-										if (search) {
-											children.forEach((child) => {
-												files.push(child);
-											});
-										} else {
-											files.push(fileObj);
-										}
-										done++;
-										if (done === data.length) {
-											res(files);
-										}
-									}
-								);
-							} else {
-								if (
-									!search ||
-									(search && file.toLowerCase().includes(search.toLowerCase()))
-								) {
-									files.push(fileObj);
-								}
-								done++;
-								if (done === data.length) {
-									res(files);
-								}
-							}
-						});
-					} else {
-						done++;
-						if (done === data.length) {
-							res(files);
-						}
-					}
-				});
-			} else {
-				res([]);
-			}
-		});
-	});
-};
+import recursivelyGetFiles from "../helpers/recursivelyGetFiles";
 
 export const getServerSideProps = (
 	context

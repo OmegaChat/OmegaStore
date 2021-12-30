@@ -3,8 +3,8 @@ import fs from "fs";
 import { getPageFiles } from "next/dist/server/get-page-files";
 import buildPath from "./buildPath";
 
-export const getPaths = (initialPath: string): Promise<string[]> => {
-	const calcPath = path.join(process.cwd(), "files", buildPath(initialPath));
+export const getPaths = (initialPath: string, continueSeq: string = ""): Promise<string[]> => {
+	const calcPath = path.join(process.cwd(), "files", buildPath(initialPath), continueSeq);
 	return new Promise((res) => {
 		fs.readdir(calcPath, (err, data) => {
 			if (err) {
@@ -21,7 +21,7 @@ export const getPaths = (initialPath: string): Promise<string[]> => {
 								console.log(err);
 							}
 							if (stat.isDirectory()) {
-								getPaths(path.join(initialPath, file)).then((children) => {
+								getPaths(initialPath, path.join(continueSeq, file)).then((children) => {
 									children.forEach((child) => {
 										paths.push(child);
 									});
@@ -32,7 +32,7 @@ export const getPaths = (initialPath: string): Promise<string[]> => {
 								});
 							} else {
 								done++;
-								paths.push(path.join(initialPath, file));
+								paths.push(path.join(continueSeq, file));
 								if (done === data.length) {
 									res(paths);
 								}
