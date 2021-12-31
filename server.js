@@ -110,6 +110,16 @@ app.prepare().then(() => {
 		}
 	}).listen(dev ? 3000 : 80, (err) => {
 		if (err) throw err;
-		console.log("> Ready on http://localhost:" + (dev ? 3000 : 80));
+		console.log("												 ")
+		console.log("												 ")
+		console.log("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")
+		console.log("┃                                              ┃")
+		console.log("┃    %s\x1b[36m%s\x1b[37m                                ┃", "Omega", "Store")
+		console.log("┃    \x1b[2m%s %s\x1b[36m%s\x1b[37m                              ┃", "by", "Omega", "Chat")
+		console.log("┃    > Server running on port %s             %s┃", (dev ? 3000 : 80), (dev ? "" : "  "))
+		console.log("┃                                              ┃")
+		console.log("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")
+		console.log("												 ")
+		console.log("												 ")
 	});
 });
