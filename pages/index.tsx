@@ -4,6 +4,8 @@ import { getServerSideProps as gsP } from "./files";
 const home = (props: props) => {
 	return (
 		<main>
+			<title>OmegaStore</title>
+			<link rel="icon"  href="favicon.ico" />
 			<div className="header">
 				<div className="header__logo">
 					<div className="logo__top">Omega</div>
