@@ -2,6 +2,7 @@ const { createServer } = require("http");
 const { parse } = require("url");
 const next = require("next");
 const getPaths = require("./helpers/getPaths").getPaths;
+const buildPath = require("./helpers/buildPath")["default"];
 const recursivelyGetFiles = require("./helpers/recursivelyGetFiles")["default"];
 const path = require("path");
 const fs = require("fs");
@@ -70,7 +71,7 @@ app.prepare().then(() => {
 							res.statusCode = 200;
 							res.setHeader("Content-Type", getType(path.extname(filePath)));
 							const readStream = fs.createReadStream(
-								path.join(process.cwd(), "files", host, filePath).toString()
+								path.join(process.cwd(), "files", buildPath(host), filePath).toString()
 							);
 							readStream.on("error", (err) => {
 								console.log(err);
